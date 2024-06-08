@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-const baseURL = process.env.REACT_APP_API_URL || '';
+const baseURL = process.env.REACT_APP_API_URL;
 
 const getWeatherFromApi = async () => {
   try {
