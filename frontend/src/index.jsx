@@ -1,11 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-const baseURL = process.env.REACT_APP_API_URL || 'http://20.82.145.74:9000/api';
+const baseURL = process.env.REACT_APP_API_URL || 'http://20.82.145.74/api/weather';
 
 const getWeatherFromApi = async () => {
   try {
-    const response = await fetch(`${baseURL}/weather`);
+    const response = await fetch(baseURL);
     return response.json();
   } catch (error) {
     console.error(error);

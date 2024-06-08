@@ -12,8 +12,19 @@ services:
 
   backend:
     build: ./backend
-    ports:
-      - "9000:9000"
+    expose:
+      - "9000"
     volumes:
       - ./backend:/app
       - /app/node_modules
+
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - frontend
+      - backend
+
