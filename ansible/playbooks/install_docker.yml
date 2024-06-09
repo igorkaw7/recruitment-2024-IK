@@ -1,0 +1,66 @@
+---
+- name: Installing Docker
+  hosts: all
+  gather_facts: true
+
+  tasks:
+    - name: Installing dependencies on Ubuntu
+      apt:
+        name: 
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - gnupg-agent
+          - software-properties-common
+        state: present
+        update_cache: yes
+      when: ansible_facts['os_family'] == "Debian"
+      become: yes
+
+    - name: Adding Docker's GPG key on Ubuntu
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+      when: ansible_facts['os_family'] == "Debian"
+      become: yes
+
+    - name: Setting up the Docker stable repository on Ubuntu
+      apt_repository:
+        repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable
+        state: present
+      when: ansible_facts['os_family'] == "Debian"
+      become: yes
+
+    - name: Installing Docker CE on Ubuntu
+      apt:
+        name: docker-ce
+        state: present
+        update_cache: yes
+      when: ansible_facts['os_family'] == "Debian"
+      become: yes
+
+    - name: Installing Docker Compose on Ubuntu
+      get_url:
+        url: https://github.com/docker/compose/releases/download/1.29.2/docker-compose-Linux-x86_64
+        dest: /usr/local/bin/docker-compose
+        mode: '0755'
+      when: ansible_facts['os_family'] == "Debian"
+      become: yes
+
+    - name: Ensuring Docker is started on Ubuntu
+      service:
+        name: docker
+        state: started
+        enabled: yes
+      when: ansible_facts['os_family'] == "Debian"
+      become: yes
+
+    - name: Installing dependencies and Docker on macOS
+      homebrew:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - python
+        - docker
+        - docker-compose
+      when: ansible_facts['os_family'] == "Darwin"
