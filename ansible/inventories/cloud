@@ -1,0 +1,2 @@
+[cloud]
+azure_vm ansible_host=20.82.145.74 ansible_user=ubuntuadmin ansible_ssh_private_key_file=~/Desktop/EFICODE/keys/id_rsa
