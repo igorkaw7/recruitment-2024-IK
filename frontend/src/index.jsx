@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-const baseURL = process.env.REACT_APP_API_URL || 'http://20.82.145.74/api';
+const baseURL = process.env.ENDPOINT;
 
 const getWeatherFromApi = async () => {
   try {
