@@ -6,32 +6,38 @@
   tasks:
     - name: Ensure project directory exists
       file:
-        path: "{{ ansible_facts['user_dir'] }}/recruitment-2024-IK"
+        path: "/home/{{ ansible_user }}/recruitment-2024-IK"
         state: directory
 
     - name: Copy project files
       synchronize:
         src: "{{ playbook_dir }}/../../"
-        dest: "{{ ansible_facts['user_dir'] }}/recruitment-2024-IK"
+        dest: "/home/{{ ansible_user }}/recruitment-2024-IK"
         rsync_opts:
           - "--exclude=.git/"
           - "--exclude=ansible/"
           - "--exclude=__pycache__/"
+          - "--exclude=.gitignore"
+          - "--exclude=README.md"
+          - "--exclude=.DS_Store"
+          - "--exclude=frontend/node_modules/"
+          - "--exclude=backend/node_modules/"
+          - "-e 'ssh -i {{ ansible_ssh_private_key_file }} -o StrictHostKeyChecking=no'"
       delegate_to: localhost
       become: yes
 
     - name: Ensure docker-compose.yml is present
       stat:
-        path: "{{ ansible_facts['user_dir'] }}/recruitment-2024-IK/docker-compose.yml"
+        path: "/home/{{ ansible_user }}/recruitment-2024-IK/docker-compose.yml"
       register: compose_file
 
     - name: Change to project directory and bring down any existing containers
       command: docker-compose down
       args:
-        chdir: "{{ ansible_facts['user_dir'] }}/recruitment-2024-IK"
+        chdir: "/home/{{ ansible_user }}/recruitment-2024-IK"
       when: compose_file.stat.exists
 
     - name: Start application with Docker Compose
       command: docker-compose up --build -d
       args:
-        chdir: "{{ ansible_facts['user_dir'] }}/recruitment-2024-IK"
+        chdir: "/home/{{ ansible_user }}/recruitment-2024-IK"
