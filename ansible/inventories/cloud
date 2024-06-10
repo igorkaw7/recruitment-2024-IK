@@ -1,2 +1,2 @@
 [cloud]
-azure_vm ansible_host=20.82.145.74 ansible_user=ubuntuadmin ansible_ssh_private_key_file=/Users/igor/Desktop/EFICODE/keys/id_rsa
+azure_vm ansible_host=<YOUR.HOST.PUBLIC.IP> ansible_user=<admin_username> ansible_ssh_private_key_file=<ssh_public_key>
