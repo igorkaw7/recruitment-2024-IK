@@ -10,7 +10,7 @@ Ensure you obtained API key from [openweather](https://openweathermap.org/). Als
 * If you want to access the app locally you'll also need [Docker](https://docs.docker.com/get-docker/) and [docker-compose](https://docs.docker.com/compose/install/)
 
 ## Setup ⚙️
-All you need to access the weather service is a moment for simple configuration and you'll be ready to go! Isn't that awesome?
+All you need to access the weather service is a simple configuration setup and you'll be ready to go! Isn't that awesome?
 
 ### Clone this repository
 * First clone this repository:
@@ -39,12 +39,12 @@ vim example.tfvars
 ```
 * Provide appropriate data, e.g.:
 ```sh
-resource_group_name = "my-unique-resource-group"
-location            = "North EU"
-ssh_public_key      = "/my/absolute/rsa/public/key/path.pub"
+resource_group_name = "my-unique-resource-group-name"
+location            = "my-desired-location" #e.g. "North EU"
+ssh_public_key      = "/my/absolute/path/to/rsa/public/key/path.pub"
 supervisor_ssh_public_key = "/my/supervisor/absolute/rsa/public/key/path.pub"
-computer_name       = "UbuntuVM"
-admin_username      = "ubuntuadmin"
+computer_name       = "my-vm-name"
+admin_username      = "my-admin-username"
 disable_password_authentication = true 
 ```
 
@@ -60,8 +60,7 @@ cp example.tfvars terraform.tfvars
 ./apply.sh
 ```
 * After this step, the output should be:
-``public_ip_address = "" -> "YOUR.HOST.PUBLIC.IP"``
-If somehow the ip doesnt show try ``./init.sh`` and ``./apply.sh`` once again.
+``public_ip_address = "" -> "YOUR.HOST.PUBLIC.IP"``. If somehow the ip doesnt show try ``./init.sh`` and ``./apply.sh`` once again.
 
 ### Configure .env
 * Navigate to the project root directory.
@@ -70,8 +69,12 @@ If somehow the ip doesnt show try ``./init.sh`` and ``./apply.sh`` once again.
 ENDPOINT=http://YOUR.HOST.PUBLIC.IP/api
 APPID=your-api-key
 ```
-### Configure Ansible inventories
-Before running the playbooks we need to navigate to ``ansible/inventories/cloud`` from the project root dit and provide ``YOUR.HOST.PUBLIC.IP``from the output after ``./apply``, ``admin_username`` from ``terraform.tfvars`` file and absolute path to your PRIVATE ssh key.
+### Configure Ansible cloud inventory
+Before running the playbooks navigate to ``ansible/inventories/cloud`` from the project root dit and provide:
+* ``YOUR.HOST.PUBLIC.IP``(from the output after ``./apply``)
+* ``admin_username`` from ``terraform.tfvars`` file
+* Absolute path to your PRIVATE ssh key
+  
 ```ssh
 [cloud]
 azure_vm ansible_host=HOST.PUBLIC.IP.HERE ansible_user=adminusernamehere ansible_ssh_private_key_file=/absolute/path/to/rsa/private/key
@@ -80,22 +83,20 @@ azure_vm ansible_host=HOST.PUBLIC.IP.HERE ansible_user=adminusernamehere ansible
 ## Deployment 👷
 
 ### Run Ansible playbooks
-We're almost done! To deploy your application first we need to install Docker and docker-compose on your host.
+We're almost done! To deploy your application first we need to install Docker and docker-compose on your cloud host.
 * In the terminal, from project root directory run:
 ```sh
 ansible-playbook -i ansible/inventories/cloud ansible/playbooks/install_docker.yml 
 ```
-Now having Docker and docker-compose installed it's time to finally deploy your weather service.
-* Run this command as superuser (coping files) and provide your password:
+Now having Docker and docker-compose installed, it's time to finally deploy your weather service.
+* Run this command as a superuser (coping files from local machine requires sudo) and provide your password:
 ```sh
 sudo ansible-playbook -i ansible/inventories/cloud ansible/playbooks/deploy_app.yml 
 ```
 
 ## Usage 💃
-
-To admire the true beauty of your freshly deployed weather service simply go to your browser and type:
-``YOUR.HOST.PUBLIC.IP``
-The same you obtained earlier, after configuring Terraform.
+To admire the true beauty of your freshly deployed weather service, simply go to your browser and type:
+``YOUR.HOST.PUBLIC.IP``. The same you obtained earlier, after configuring Terraform.
 
 ## Deleting the infrastructure 💥
 If for some reason you didn't like your setup and want to ``🔥 destroy 🔥`` (delete) the infrastructure, simply follow those steps:
@@ -123,14 +124,14 @@ Now wait till your Azure resources will be completely deleted.
 * Some more 'elegant' way of providing API key to the ``.env`` file.
 
 ### Terraform
-* There could be a bash script for running ``./init``, waiting for the process to complete, copying files from ``example.tfvars`` to ``terraform.tfvars`` and then running ``./apply``, and somehow fetching ``YOUR.HOST.PUBLIC.IP`` to the rest of configuration.
-* Fixing the problem with ./apply.sh not displaying ip straight away.
+* There could be a bash script for: parsing the terminal arguments and passing it to example.tfvars + running ``./init``, waiting for the process to complete, copying files from ``example.tfvars`` to ``terraform.tfvars`` and then running ``./apply``, and somehow fetching and passing``YOUR.HOST.PUBLIC.IP`` to the rest of the configuration (coping from example.tfvars to terraform.tfvars could also be skipped with simply passing the arguments directly to newly created terraform.tfvars).
+* Fixing the problem with ./apply.sh not displaying ip straight away (in /terraform/main.tf).
 
 ### Ansible 
-* Possibility of writing bash script executing the ansible playboos in simpler way.
+* Possibility of writing a bash script which would execute the ansible playboos in simpler way.
 
 ### Full automation (not 100% sure about this)
-* Single bash script to fully automate above listed improvements.
+* Single bash script to fully automate above listed improvements (user provides appropriate args just in one command).
 
 ### README
 * More consistent with clearer instructions. 
