@@ -1,8 +1,8 @@
 
-resource_group_name = "<your-unique-resource-group-name>"
-location            = "<prefferedlocation>"
-ssh_public_key      = "/your/absolute/rsa/public/key/path.pub"
-supervisor_ssh_public_key = "supervisor/absolute/rsa/public/key/path.pub"
-computer_name       = "<yourhostname>"
-admin_username      = "<yourusername>"
-disable_password_authentication = <true_or_false> 
+resource_group_name = "some-unique-resource-IK"
+location            = "North Europe"
+ssh_public_key      = "/Users/igor/Desktop/EFICODE/keys/id_rsa.pub"
+supervisor_ssh_public_key = "/Users/igor/Desktop/EFICODE/keys2/id2_rsa.pub"
+computer_name       = "jozin"
+admin_username      = "zbazin"
+disable_password_authentication = true 

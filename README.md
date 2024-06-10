@@ -1,3 +1,4 @@
+
 # Weatherapp ☀️
 Weatherapp project deployment encorporating Azure cloud hosting, Terraform and Ansible automation, containerization as well as reverse proxy handling.
 
@@ -11,6 +12,16 @@ Ensure you obtained API key from [openweather](https://openweathermap.org/). Als
 ## Setup ⚙️
 All you need to access the weather service is a moment for simple configuration and you'll be ready to go! Isn't that awesome?
 
+### Clone this repository
+* First clone this repository:
+```sh
+git clone https://github.com/igorkaw7/recruitment-2024-IK
+```
+* And navigate to it's root directory:
+```ssh
+cd recruitment-2024-IK
+```
+
 ### Login to Azure CLI
 In your terminal run:
 ```sh
@@ -18,25 +29,25 @@ az login
 ```
 
 ### Configure Terraform
-* First go to 'terraform' directory:
+* Go to 'terraform' directory:
 ```
-cd terraform
+cd terraform/
 ```
 * Open 'example.tfvars' in any text editor e.g. vim:
 ```sh
 vim example.tfvars
 ```
-* Provide appropriate data:
+* Provide appropriate data, e.g.:
 ```sh
-
-resource_group_name = "<your-unique-resource-group-name>"
-location            = "<prefferedlocation>"
-ssh_public_key      = "/your/absolute/rsa/public/key/path.pub"
-supervisor_ssh_public_key = "/supervisor/absolute/rsa/public/key/path.pub"
-computer_name       = "<yourhostname>"
-admin_username      = "<yourusername>"
-disable_password_authentication = <true_or_false> 
+resource_group_name = "my-unique-resource-group"
+location            = "North EU"
+ssh_public_key      = "/my/absolute/rsa/public/key/path.pub"
+supervisor_ssh_public_key = "/my/supervisor/absolute/rsa/public/key/path.pub"
+computer_name       = "UbuntuVM"
+admin_username      = "ubuntuadmin"
+disable_password_authentication = true 
 ```
+
 * Once you've done it, run:
 ```sh
 cp example.tfvars terraform.tfvars
@@ -49,24 +60,28 @@ cp example.tfvars terraform.tfvars
 ./apply.sh
 ```
 * After this step, the output should be:
-```sh
-public_ip_address = "" -> "YOUR.HOST.PUBLIC.IP"
-```
+``public_ip_address = "" -> "YOUR.HOST.PUBLIC.IP"``
+If somehow the ip doesnt show try ``./init.sh`` and ``./apply.sh`` once again.
 
 ### Configure .env
-* Navigate to the project root directory and edit ``.env`` file providing necessary data:
+* Navigate to the project root directory.
+* Edit ``.env`` file providing necessary data:
 ```sh
 ENDPOINT=http://YOUR.HOST.PUBLIC.IP/api
 APPID=your-api-key
 ```
 ### Configure Ansible inventories
-Before running the playbooks we need to navigate to ``ansible/inventories`` from the project root dit and provide ``<YOUR.HOST.PUBLIC.IP>``, ``<admin_username>``, and ``<ssh_public_key>`` from ``example.tfvars`` file.
+Before running the playbooks we need to navigate to ``ansible/inventories/cloud`` from the project root dit and provide ``YOUR.HOST.PUBLIC.IP``from the output after ``./apply``, ``admin_username`` from ``terraform.tfvars`` file and absolute path to your PRIVATE ssh key.
+```ssh
+[cloud]
+azure_vm ansible_host=HOST.PUBLIC.IP.HERE ansible_user=adminusernamehere ansible_ssh_private_key_file=/absolute/path/to/rsa/private/key
+```
 
 ## Deployment 👷
 
 ### Run Ansible playbooks
 We're almost done! To deploy your application first we need to install Docker and docker-compose on your host.
-* In the terminal run:
+* In the terminal, from project root directory run:
 ```sh
 ansible-playbook -i ansible/inventories/cloud ansible/playbooks/install_docker.yml 
 ```
@@ -78,7 +93,7 @@ sudo ansible-playbook -i ansible/inventories/cloud ansible/playbooks/deploy_app.
 
 ## Usage 💃
 
-In order to admire the true beauty of your freshly deployed weather service simply go to your browser and type:
+To admire the true beauty of your freshly deployed weather service simply go to your browser and type:
 ``YOUR.HOST.PUBLIC.IP``
 The same you obtained earlier, after configuring Terraform.
 
@@ -86,13 +101,17 @@ The same you obtained earlier, after configuring Terraform.
 If for some reason you didn't like your setup and want to ``🔥 destroy 🔥`` (delete) the infrastructure, simply follow those steps:
 * ``SSH`` into your cloud host:
 ```ssh
-ssh -i ~/path/to/your/private/rsa/key yourusername@YOUR.HOST.PUBLIC.IP"
+ssh -i ~/path/to/your/private/rsa/key adminusername@YOUR.HOST.PUBLIC.IP"
 ```
-* Navigate to the root project directory and run:
+* Navigate to the root project directory:
+```ssh
+cd recruitment-2024-IK/
+```
+* And run:
 ```sh
 sudo docker-compose down
 ```
-* Now you can ``logout`` from the cloud host machine, and in your controll (local) terminal navigate to ``terraform`` directory and run:
+* Now you can ``logout`` from the cloud host machine, and in your control (local) terminal navigate to ``terraform`` directory and run:
 ```sh
 ./destroy.sh
 ```
@@ -105,6 +124,7 @@ Now wait till your Azure resources will be completely deleted.
 
 ### Terraform
 * There could be a bash script for running ``./init``, waiting for the process to complete, copying files from ``example.tfvars`` to ``terraform.tfvars`` and then running ``./apply``, and somehow fetching ``YOUR.HOST.PUBLIC.IP`` to the rest of configuration.
+* Fixing the problem with ./apply.sh not displaying ip straight away.
 
 ### Ansible 
 * Possibility of writing bash script executing the ansible playboos in simpler way.
