@@ -60,7 +60,7 @@ cp example.tfvars terraform.tfvars
 ./apply.sh
 ```
 * After this step, the output should be:
-``public_ip_address = "" -> "YOUR.HOST.PUBLIC.IP"``. If somehow the ip doesnt show try ``./init.sh`` and ``./apply.sh`` once again.
+``public_ip_address = "" -> "YOUR.HOST.PUBLIC.IP"``. If somehow the ip doesnt show try ``./apply.sh`` once again.
 
 ### Configure .env
 * Navigate to the project root directory.
