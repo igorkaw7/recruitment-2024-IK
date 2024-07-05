@@ -2,7 +2,7 @@
 # Weatherapp ☀️
 Weatherapp project deployment encorporating Azure cloud hosting, Terraform and Ansible automation, containerization as well as reverse proxy handling.
 
-## Prequisities ✅
+## Prerequisites ✅
 Ensure you obtained API key from [openweather](https://openweathermap.org/). Also you need to have those tools installed:
 * Azure CLI [(instructions)](https://learn.microsoft.com/en-us/cli/azure/install-azure-cli)
 * Terraform [(instructions)](https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli)
